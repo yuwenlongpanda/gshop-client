@@ -4,7 +4,7 @@
         <span class="item_icon">
           <i class="iconfont icon-waimai"></i>
         </span>
-        <span>外卖</span>
+        <span>首页</span>
       </div>
       <div class="guide_item" @click="goto('/search')" :class="{on: isCurrent('/search')}">
         <span class="item_icon">
