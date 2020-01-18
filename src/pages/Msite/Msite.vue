@@ -310,7 +310,18 @@
 
 <script>
 import HeaderTop from '../../components/HeaderTop/HeaderTop.vue'
+import Swiper from 'swiper'
+import 'swiper/css/swiper.min.css'
 export default {
+  mounted () {
+    /* eslint-disable no-new */
+    new Swiper('.swiper-container', {
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination'
+      }
+    })
+  },
   components: {
     HeaderTop
   }
