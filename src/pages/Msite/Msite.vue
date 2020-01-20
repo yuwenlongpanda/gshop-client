@@ -135,6 +135,10 @@ import 'swiper/css/swiper.min.css'
 import HeaderTop from '../../components/HeaderTop/HeaderTop.vue'
 import ShopList from '../../components/ShopList/ShopList.vue'
 export default {
+  components: {
+    HeaderTop,
+    ShopList
+  },
   mounted () {
     /* eslint-disable no-new */
     new Swiper('.swiper-container', {
@@ -143,10 +147,6 @@ export default {
         el: '.swiper-pagination'
       }
     })
-  },
-  components: {
-    HeaderTop,
-    ShopList
   }
 }
 </script>
