@@ -2,7 +2,7 @@
   <section class="loginContainer">
     <div class="loginInner">
       <div class="login_header">
-        <h2 class="login_logo">硅谷外卖</h2>
+        <h2 class="login_logo">美团外卖</h2>
         <div class="login_header_title">
           <a href="javascript:;" :class="{on: loginWay}" @click="loginWay=true">短信登录</a>
           <a href="javascript:;" :class="{on: !loginWay}" @click="loginWay=false">密码登录</a>
@@ -13,13 +13,15 @@
           <div :class="{on: loginWay}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
-              <button disabled="disabled" class="get_verification" :class="{right_phone: rightPhone}">获取验证码</button>
+              <button :disabled="!rightPhone" class="get_verification" :class="{right_phone: rightPhone}" @click.prevent="getCode">
+                {{computeTime > 0 ? `已发送(${computeTime}s)` : '获取验证码'}}
+              </button>
             </section>
             <section class="login_verification">
               <input type="tel" maxlength="8" placeholder="验证码">
             </section>
             <section class="login_hint">
-              温馨提示：未注册硅谷外卖帐号的手机号，登录时将自动注册，且代表已同意
+              温馨提示：未注册美团外卖帐号的手机号，登录时将自动注册，且代表已同意
               <a href="javascript:;">《用户服务协议》</a>
             </section>
           </div>
@@ -57,12 +59,30 @@ export default {
   data () {
     return {
       loginWay: true, // 默认为true，代表手机验证码登录；false代码账号密码登录
-      phone: ''
+      phone: '',
+      computeTime: 0
     }
   },
   computed: {
     rightPhone () {
       return /^1\d{10}$/.test(this.phone)
+    }
+  },
+  methods: {
+    getCode () {
+      // 如果当前没有计时
+      if (!this.computeTime) {
+        // 启动倒计时
+        this.computeTime = 30
+        this.intervalId = setInterval(() => {
+          this.computeTime--
+          if (this.computeTime <= 0) {
+            // 停止计时
+            clearInterval(this.intervalId)
+          }
+        }, 1000)
+        // 发送ajax请求(向指定手机号发送验证码短信)
+      }
     }
   }
 }
