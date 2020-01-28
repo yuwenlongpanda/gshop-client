@@ -58,6 +58,7 @@
 
 <script>
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
+import {reqSendCode} from '../../api'
 export default {
   components: {
     AlertTip
@@ -83,7 +84,7 @@ export default {
     }
   },
   methods: {
-    getCode () {
+    async getCode () {
       // 如果当前没有计时
       if (!this.computeTime) {
         // 启动倒计时
@@ -96,6 +97,17 @@ export default {
           }
         }, 1000)
         // 发送ajax请求(向指定手机号发送验证码短信)
+        const result = await reqSendCode(this.phone)
+        if (result.code === 1) {
+          // 显示提示
+          this.showAlert(result.data)
+          // 停止计时
+          if (this.computeTime) {
+            this.computeTime = 0
+            clearInterval(this.intervalId)
+            this.intervalId = undefined
+          }
+        }
       }
     },
     login () {
