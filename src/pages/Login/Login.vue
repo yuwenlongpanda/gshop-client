@@ -40,7 +40,7 @@
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <img class="get_verification" :src="imageUrl + '/api/captcha'" alt="captcha" @click="getCaptcha">
               </section>
             </section>
           </div>
@@ -73,7 +73,8 @@ export default {
       name: '', // 用户名
       captcha: '', // 图形验证码
       alertText: '', // 提示文本
-      alertShow: false // 是否显示警告框
+      alertShow: false, // 是否显示警告框
+      imageUrl: 'http://286v9948f6.wicp.vip:39435' // 随记验证码url
     }
   },
   computed: {
@@ -128,6 +129,11 @@ export default {
     closeTip () {
       this.alertShow = false
       this.alertText = ''
+    },
+    // 获取随记验证码
+    getCaptcha (event) {
+      // 每次指定的src要不一样
+      event.target.src = this.imageUrl + '/api/captcha?time=' + Date.now()
     }
   }
 }
