@@ -39,7 +39,7 @@
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha" ref="captcha">
                 <img class="get_verification" :src="imageUrl + '/api/captcha'" alt="captcha" @click="getCaptcha">
               </section>
             </section>
@@ -58,7 +58,7 @@
 
 <script>
 import AlertTip from '../../components/AlertTip/AlertTip.vue'
-import {reqSendCode} from '../../api'
+import {reqSendCode, reqSmsLogin, reqPwdLogin} from '../../api'
 export default {
   components: {
     AlertTip
@@ -110,27 +110,58 @@ export default {
         }
       }
     },
-    login () {
+    async login () {
+      let result
       // 前台表单验证
       if (this.loginWay) { // 短信登陆
         if (!this.rightPhone) {
           // 手机号不正确
           this.showAlert('手机号不正确')
+          return
         } else if (!/^\d{6}$/.test(this.code)) {
           // 验证必须是6位数字
           this.showAlert('验证必须是6位数字')
+          return
         }
+        // 发送ajax请求短信登陆
+        result = await reqSmsLogin(this.phone, this.code)
       } else { // 密码登陆
-        if (!this.name) {
+        const {name, pwd, captcha} = this
+        if (!name) {
           // 用户名必须指定
           this.showAlert('用户名必须指定')
-        } else if (!this.pwd) {
+          return
+        } else if (!pwd) {
           // 密码必须指定
           this.showAlert('密码必须指定')
-        } else if (!this.captcha) {
+          return
+        } else if (!captcha) {
           // 验证码必须指定
           this.showAlert('验证码必须指定')
+          return
         }
+        // 发送ajax请求密码登陆
+        result = await reqPwdLogin({name, pwd, captcha})
+      }
+      // 停止计时
+      if (this.computeTime) {
+        this.computeTime = 0
+        clearInterval(this.intervalId)
+        this.intervalId = undefined
+      }
+
+      // 根据结果数据处理
+      if (result.code === 0) {
+        // 将user保存到vuex的state
+
+        // 去个人中心界面
+        this.$router.replace('/profile')
+      } else {
+        // 显示新的图片验证码
+        this.getCaptcha()
+        // 显示警告提示
+        const msg = result.data
+        this.showAlert(msg)
       }
     },
     showAlert (alertText) {
@@ -143,9 +174,9 @@ export default {
       this.alertText = ''
     },
     // 获取随记验证码
-    getCaptcha (event) {
+    getCaptcha () {
       // 每次指定的src要不一样
-      event.target.src = this.imageUrl + '/api/captcha?time=' + Date.now()
+      this.$refs.src = this.imageUrl + '/api/captcha?time=' + Date.now()
     }
   }
 }
