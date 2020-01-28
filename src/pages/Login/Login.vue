@@ -39,8 +39,9 @@
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha" ref="captcha">
-                <img class="get_verification" :src="imageUrl + '/api/captcha'" alt="captcha" @click="getCaptcha">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                <img class="get_verification" :src="imageUrl + '/api/captcha'" alt="captcha"
+                     @click="getCaptcha" ref="captcha">
               </section>
             </section>
           </div>
@@ -176,7 +177,7 @@ export default {
     // 获取随记验证码
     getCaptcha () {
       // 每次指定的src要不一样
-      this.$refs.src = this.imageUrl + '/api/captcha?time=' + Date.now()
+      this.$refs.captcha.src = this.imageUrl + '/api/captcha?time=' + Date.now()
     }
   }
 }
