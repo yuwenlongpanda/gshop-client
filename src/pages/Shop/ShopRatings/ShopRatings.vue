@@ -27,18 +27,21 @@
       <div class="split"></div>
       <div class="ratingselect">
         <div class="rating-type border-1px">
-          <span class="block positive active">全部<span class="count">30</span></span>
-          <span class="block positive">满意<span class="count">28</span></span>
-          <span class="block negative">不满意<span class="count">2</span></span>
+          <span class="block positive" :class="{active: selectType===2}" @click="setSelectType(2)">
+            全部<span class="count">{{ratings.length}}</span></span>
+          <span class="block positive" :class="{active: selectType===0}" @click="setSelectType(0)">
+            满意<span class="count">{{positiveSize}}</span></span>
+          <span class="block negative" :class="{active: selectType===1}" @click="setSelectType(1)">
+            不满意<span class="count">{{ratings.length-positiveSize}}</span></span>
         </div>
-        <div class="switch on">
+        <div class="switch" :class="{on: onlyShowText}" @click="toggleOnlyShowText">
           <span class="iconfont icon-check_circle"></span>
           <span class="text">只看有内容的评价</span>
         </div>
       </div>
       <div class="rating-wrapper">
         <ul>
-          <li class="rating-item"  v-for="(rating, index) in ratings" :key="index">
+          <li class="rating-item"  v-for="(rating, index) in filterRatings" :key="index">
             <div class="avatar">
               <img width="28" height="28"
                    src="http://static.galileo.xiaojukeji.com/static/tms/default_header.png">
@@ -64,17 +67,59 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import {mapState, mapGetters} from 'vuex'
 import Star from '../../../components/Star/Star.vue'
+import BScroll from 'better-scroll'
 export default {
   components: {
     Star
   },
+  data () {
+    return {
+      onlyShowText: true, // 是否只显示有文本的
+      selectType: 2 // 选择的评价类型: 0满意, 1不满意, 2全部
+    }
+  },
   computed: {
-    ...mapState(['info', 'ratings'])
+    ...mapState(['info', 'ratings']),
+    ...mapGetters(['positiveSize']),
+    filterRatings () {
+      // 得到相关的数据
+      const {ratings, onlyShowText, selectType} = this
+
+      // 产生一个过滤新数组
+      return ratings.filter(rating => {
+        const {rateType, text} = rating
+        /*
+          条件1:
+              selectType: 0/1/2
+              rateType: 0/1
+              selectType===2 || selectType===rateType
+          条件2
+              onlyShowText: true/false
+              text: 有值/没值
+              !onlyShowText || text.length>0
+         */
+        return (selectType === 2 || selectType === rateType) && (!onlyShowText || text.length > 0)
+      })
+    }
   },
   mounted () {
-    this.$store.dispatch('getShopRatings')
+    this.$store.dispatch('getShopRatings', () => {
+      this.$nextTick(() => { // eslint-disable-next-line
+        new BScroll(this.$refs.ratings, {
+          click: true
+        })
+      })
+    })
+  },
+  methods: {
+    setSelectType (selectType) {
+      this.selectType = selectType
+    },
+    toggleOnlyShowText () {
+      this.onlyShowText = !this.onlyShowText
+    }
   }
 }
 </script>
