@@ -28,8 +28,8 @@
               <p>
                 <span>{{item.name}}</span>
               </p>
-              <p>月售 {{item.month_sales||item.recent_order_num}} 单</p>
-              <p>{{item.delivery_fee||item.float_minimum_order_amount}} 元起送 / 距离{{item.distance}}</p>
+              <p>月售 {{item.monthSales||item.recentOrderNum}} 单</p>
+              <p>{{item.deliveryFee||item.floatMinimumOrderAmount}} 元起送 / 距离{{item.distance}}</p>
             </div>
           </section>
         </router-link>
