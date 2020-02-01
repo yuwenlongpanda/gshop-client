@@ -8,8 +8,15 @@ import {Button} from 'mint-ui'
 
 import './mock/mockServer' // 加载mockServer即可
 
+import VueLazyload from 'vue-lazyload'
+import loading from './common/imgs/loading.gif'
+
 // 注册全局组件
 Vue.component(Button.name, Button)
+
+Vue.use(VueLazyload, {
+  loading
+})
 
 /* eslint-disable no-new */
 new Vue({
