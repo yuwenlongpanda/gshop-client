@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import {Button} from 'mint-ui'
+import './filters' // 加载过滤器
 
 import './mock/mockServer' // 加载mockServer即可
 
