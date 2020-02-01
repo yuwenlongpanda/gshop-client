@@ -18,7 +18,7 @@
           </div>
         </div>
       </div>
-      <div class="shopcart-list" v-show="isShow">
+      <div class="shopcart-list" v-show="listShow">
         <div class="list-header">
           <h1 class="title">购物车</h1>
           <span class="empty">清空</span>
@@ -36,7 +36,7 @@
         </div>
       </div>
     </div>
-    <div class="list-mask" v-show="isShow" @click="toggleShow"></div>
+    <div class="list-mask" v-show="listShow" @click="toggleShow"></div>
   </div>
 </template>
 
@@ -71,6 +71,14 @@ export default {
       } else {
         return '结算'
       }
+    },
+    listShow () {
+      // 如果总数量为0, 直接不显示
+      if (this.totalCount === 0) { // eslint-disable-next-line
+        this.isShow = false
+        return false
+      }
+      return this.isShow
     }
   },
   methods: {
